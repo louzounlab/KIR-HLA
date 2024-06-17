@@ -1,26 +1,35 @@
 {% extends 'base.html' %}
+{% block head %}
+    {{ super() }}
+    <style>
+        .info {
+          font-size: 1vw;
+          width: 80%;
+          margin: auto;
+          word-break: break-all; 
+        }
 
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z8MJKC3L7C"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-Z8MJKC3L7C');
-</script>
+        .info h1 {
+          font-size: 1.5vw;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
-<section class="content">
-    <br>
-  <header>
-      <div class="big_text">
-      <p>Example input file -
-          <button class="btn download-button">
-            <a class="download-link" href="/download-example-files">download</a>
-          </button>
-      </p>
-      </div>
-  </header>
-</section>
+<div class="info">
+    <header>
+    <h1>Example of amino acid sequence:</h1>
+        <ul>
+            <li>GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQKMEPRAPWIEQEGPEYWDQETRNMKAHSQTDRANLGTLRGYYNQSEDGSHTIQIMYGCDVGPDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAVHAAEQRRVYLEGRCVDGLRRYLENGKETLQRTD</li>
+            <li>GSHSMRYFYTSVSRPGRGEPRFISVGYVDDTQFVRFDSDAASPREEPRAPWIEQEGPEYWDRNTQIYKAQAQTDRESLRNLRGYYNQSEAGSHTLQSMYGCDVGPDGRLLRGHDQYAYDGKDYIALNEDLRSWTAADTAAQITQRKWEAAREAEQRRAYLEGECVEWLRRYLENGKDKLERAD</li>
+            <li>CSHSMKYFFTSVSRPGRGEPRFISVGYVDDTQFVRFDSDAASPRGEPRAPWVEQEGPEYWDRETQKYKRQAQTDRVSLRNLRGYYNQSEAGSHTLQWMCGCDLGPDGRLLRGYDQYAYDGKDYIALNEDLRSWTAADTAAQITQRKWEAAREAEQRRAYLEGTCVEWLRRYLENGKETLQRAE</li>
+        </ul>
+        <h1>Example of HLA allele:</h1>
+        <ul>
+            <li>A01:01</li>
+            <li>B07:02</li>
+            <li>C01:02</li>
+        </ul>
+    </header>
+</div>
 {% endblock %}

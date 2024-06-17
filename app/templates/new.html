@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script>
+    function sequenceInput() {
+        name_ = document.getElementById("allele_name")
+        seq = document.getElementById("allele_seq")
+
+        if (seq.value != "") {
+            name_.setAttribute("disabled", "");
+        } else {
+            name_.removeAttribute("disabled");
+
+        }
+    }
+
+    function nameInput() {
+        name_ = document.getElementById("allele_name")
+        seq = document.getElementById("allele_seq")
+
+        if (name_.value != "") {
+            seq.setAttribute("disabled", "");
+        } else {
+            seq.removeAttribute("disabled");
+
+        }
+    }
+</script>
+
+<script>
+    function drawChartValues() {
+        // values95
+        var data = google.visualization.arrayToDataTable([
+            ["measure", "score", { role: "style" }],
+            {% for i in range(r_values|length): %}
+                {% if i == 0 : %}
+                    {% set color = 'red' %}
+                {% elif i == 1: %}
+                    {% set color = 'rgb(60, 179, 113)' %}
+                {% else %}
+                    {% set color = '#0693e3' %}
+                {% endif %}
+                {% set stroke = 1 %}
+
+                ["{{ measures[i] }}", {{ r_values[i] }}, "color: {{ color }};"],
+            {% endfor %}
+        ]);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            isStacked: true,
+            title: "Binding score",
+            width: '%100',
+            height: 400,
+            legend: { position: "none" },
+            hAxis: {
+                format: 'decimal',
+                slantedText: false
+            },  
+            seriesType: 'bars',
+            // series: {1: {color: 'green'}}
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById("columnchart_values1"));
+        /*
+        google.visualization.events.addListener(chart, 'ready', () => {
+            document.getElementById("before-draw").style.display = "none";
+            document.getElementById("after-draw").style.display = "block";
+        });
+        */
+        chart.draw(view, options);
+    }
+
+    function drawChartPercentValues() {
+        var data = google.visualization.arrayToDataTable([
+            ["measure", "percentile", { role: "style" }, "",  { role: "style" }],
+            {% for i in range(r_values|length): %}
+                {% if i == 0 : %}
+                    {% set color = 'red' %}
+                {% elif i == 1: %}
+                    {% set color = 'rgb(60, 179, 113)' %}
+                {% else %}
+                    {% set color = '#0693e3' %}
+                {% endif %}
+
+                // ["{{ measures[i] }}",{{ n_values[i] }}, "color: {{ color }};", {{ threshold_percent[i] }}, "color: {{ color }}; opacity: 0.3;"],
+                ["{{ measures[i] }}",{{ n_values[i] }}, "color: {{ color }};", {{ threshold_percent[i] }}, "color: {{ color }};fill-opacity: 0;"],
+            {% endfor %}
+        ]);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            isStacked: false,
+            title: "Binding score fraction (out of A,B,C alleles, see Help)",
+            width: '%100',
+            height: 400,
+            legend: { position: "none" },
+            hAxis: {
+                format: 'decimal',
+                title: '',
+                slantedText: false
+            },
+            seriesType: 'bars',
+            // series: {0: {type: 'line'}}
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById("columnchart_values2"));
+        chart.draw(view, options);
+    }
+</script>
+
+{% endblock %}
+{% block content %}
+<div id="after-draw">
+    <form method="post">
+        <div style="text-align:center;">
+            <h1>KIR HLA allele binding</h1>
+            <p class="input1">
+                Please enter an amino acid sequence <b> or </b> its HLA allele:
+            </p>
+            
+            <!-- <input type="text" list="alleles" name="allele_name" id="allele_name" class="input1" placeholder="HLA allele" onkeyup="nameInput();"> -->
+            <input type="text" list="alleles" name="allele" id="allele_name" class="input1" placeholder="A HLA allele or an amino acid sequence" required>
+            <datalist id="alleles">
+                {% for allele in alleles %}
+                <option value="{{ allele }}">
+                {% endfor %}
+            </datalist>
+            <!-- <input type="text" name="allele_seq" id="allele_seq" class="input1" placeholder="Amino acid sequence" onkeyup="sequenceInput();"> -->
+            <input type="submit" value="calculate" class="input1">
+            
+            {% if error is defined %}
+                <p style="color:red;">{{ error }}</p>
+            {% endif %}
+            <br>
+            <br>
+        </div>
+    </form>
+        
+    {% if method is defined %}
+    <div style="text-align:center">
+        <h2>
+            {{ hla_name }}
+        </br>
+        Score for binding: {{ current_weight }}
+        </h2>
+    </div>
+    <center>
+        <div class="info">
+            The blue bars represent the scores for each 3LD1 allele. The red bar represents binding to 3LD1 in general (model trained on all alleles simultaneously). The green bar represents a model for the difference between low and high binders. The interpretation of the bars should be first to check for binding, then, if an HLA allele is a binder, look for high vs low binding.
+            <br>
+            Alleles with positive values are typically binders.
+            <br>
+        </div>
+        <div id="columnchart_values1"></div>
+        <div class="info">
+            <br>
+            The lower plot represents the percentile of the score for each allele or over all alleles as above. The empty bars represent the threshold percentile for any 3LD1, alleles with percentiles above the thresholds are typically binders.
+            <!-- If the score of a 3LD1 allele is lower from the binding threshold, the difference between them will be stacked above the allele's bar. Values higher than the threshold are typically binders. -->
+            
+            <br>
+        </div>
+        <div id="columnchart_values2"></div>
+    
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            google.charts.load("current", {packages:['corechart']});
+            google.charts.setOnLoadCallback(() => { 
+            drawChartValues();
+            drawChartPercentValues();
+         });
+        </script>
+    </center>
+    {% endif %}
+</div>
+{% endblock %}

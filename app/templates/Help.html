@@ -1,27 +1,42 @@
-{% extends "layout.html" %}
-{% block title %}GDM predictor{% endblock %}
+{% extends 'base.html' %}
 {% block head %}
-    {{super()}}
+    {{ super() }}
+    <style>
+        .info {
+          font-size: 1vw;
+          width: 80%;
+          margin: auto;
+        }
+
+        .info h1 {
+          font-size: 1.5vw;
+        }
+    </style>
 {% endblock %}
-{% block body %}
-    {{super()}}
-<br>
-    <h1 style="padding: 0.5%;text-align:left;font-size: 35px;color: #6E7376;font-weight: bold">Help</h1>
-    <br>
-<div style="text-align: left; font-weight: bold; margin-left: 2%; font-size: 20px">
-<!--    <p>-->
-<!--        The purpose of this website is to predict the risk to develop preeclampsia (PE), according to <br>-->
-<!--        first-trimester non-corrected prior risk combined with first trimester biochemical and biophysical markers.-->
-<!--    </p>-->
-<!--    <p>-->
-<!--        Input is manually inserted by the user into the fields on the 'Home' page.<br>-->
-<!--        Each marker has a default value, which is determined by the median value of the data used for training the model.<br>-->
-<!--        In case the user did not fill out the field, the default value is used.<br>-->
-<!--        For markers description and default values, see 'Example'.<br>-->
-<!--    </p>-->
-<!--    <p>-->
-<!--        After filling out the values and pressing the 'Result' button, <br>-->
-<!--        the estimated prediction and its percentile appear on the screen.<br>-->
-<!--    </p>-->
+
+{% block content %}
+<div class="info">
+  <h1>Explanation:</h1>
+      This site predicts the binding level between different HLA alleles and different KIR 3DL1 alleles.
+      <!-- <br> -->
+      We have tested 9 3DL1 alleles. We found that binding has three main levels - no binding, low level binding and high level binding.
+      <!-- <br> -->
+      We propose classifiers for each allele by itself, or a general predictor for 3DL1 that combines information from all alleles. In the general predictor, we also provide a predictor for low vs high level of binding.
+      <br>
+      In the site one can either choose an amino acid (e.g. A02:01) or a sequence of exon 2 and exon 3 (see example tab).
+  
+  <h1>How to use:</h1>
+      Enter amino acid - sequence of 183 upper case letters, or a HLA allele of amino acid.
+      <br>
+      NOTE: If your input contains both sequence and HLA allele, the sequence will be ignored! i.e. the result will be based only on  the HLA allele.
+      <br>
+      Press on the "calculate" button.
+      <br>
+      If you will enter only HLA allele, the amino acid sequence will be used from the amino sequences database, and shown in the text box.
+
+  <br>
+  <br>
+  <br>
+  You can download the <a href="/Coefs">coefficients</a> and <a href="/OH">alleles list</a>.
 </div>
 {% endblock %}

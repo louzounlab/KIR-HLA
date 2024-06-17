@@ -1,11 +1,11 @@
 import os
 from flask import Flask, redirect
 import click
-import site_service
-
 
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_mapping(SECRET_KEY='dev')
+click.echo(os.path.join(app.instance_path, 'amino.db'))
+app.config.from_mapping(SECRET_KEY='dev',
+                        DATABASE=os.path.join(app.instance_path, 'amino.db'))
 
 
 @app.after_request
@@ -20,14 +20,19 @@ def add_header(r):
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
 
+
 @app.route('/')
 def home():
     return redirect('/Home')
 
+import db
 
-app.register_blueprint(site_service.bp)
+db.init_app(app)
+
+import calc_and_draw
+
+app.register_blueprint(calc_and_draw.bp)
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
-
+    app.run(debug=True, host='0.0.0.0')
